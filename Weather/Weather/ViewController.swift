@@ -45,8 +45,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     }
     
-    /*func getWeather() {
-        var urlPath = "api.openweathermap.org/data/2.5/weather?lat=" + String(lat) + "&lon=" +
+    func getWeather() {
+        let urlPath = "api.openweathermap.org/data/2.5/weather?lat=" + String(lat) + "&lon=" +
         String(long)+"&units=imperial&appid=3a762d1a0b2e642dcf94080d1d6f0fbb"
         
         let url = NSURL(string: urlPath)
@@ -59,22 +59,31 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                 print(error!.localizedDescription)
             }
             var err: NSError?
-            if let jsonResult = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as? NSDictionary {
-                if(err != nil) {
-                    // If there is an error parsing JSON, print it to the console
-                    print("JSON Error \(err!.localizedDescription)")
+            do {
+                if let jsonResult:[String:AnyObject] = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) as? [String:AnyObject] {
+                    if(err != nil) {
+                        // If there is an error parsing JSON, print it to the console
+                        print("JSON Error \(err!.localizedDescription)")
+                    }
+                    if let results: NSArray = jsonResult!["results"] as? NSArray {
+                        dispatch_async(dispatch_get_main_queue(), {
+                        })
+                    }
                 }
-                if let results: NSArray = jsonResult["results"] as? NSArray {
-                    dispatch_async(dispatch_get_main_queue(), {
-                                            })
-                }
+            } catch let error as NSError {
+                    print("json error \(error.localizedDescription)")
             }
+            
         })
         
         // The task is just an object with all these properties set
         // In order to actually make the web request, we need to "resume"
         task.resume()
-    }*/
+    }
+    
+    
+    
+    
 }
 
 
