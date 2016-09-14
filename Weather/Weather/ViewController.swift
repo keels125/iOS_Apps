@@ -34,6 +34,10 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
             locationManager.startUpdatingLocation()
         }
         
+        getWeatherButton.addTarget(self, action: "buttonPress:", forControlEvents: UIControlEvents.TouchDown)
+        
+        
+        
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -65,9 +69,17 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                         // If there is an error parsing JSON, print it to the console
                         print("JSON Error \(err!.localizedDescription)")
                     }
-                    if let results: NSArray = jsonResult!["results"] as? NSArray {
+                    if let results = jsonResult["weather"] as? [[String: AnyObject]]
+                    {
                         dispatch_async(dispatch_get_main_queue(), {
                         })
+                        
+                        for info in results {
+                            if let temp = info["temp"] as? String {
+                                self.weatherDesc.text! += temp
+                            }
+                        }
+                        
                     }
                 }
             } catch let error as NSError {
@@ -82,6 +94,9 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     }
     
     
+    func buttonPress(sender: UIButton) {
+        getWeather()
+    }
     
     
 }
