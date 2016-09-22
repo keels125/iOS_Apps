@@ -46,12 +46,16 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         
         lat =  Int(locValue.latitude) //Trim for API use
         long = Int(locValue.longitude)
+        
     
     }
     
     func getWeather() {
-        let urlPath = "api.openweathermap.org/data/2.5/weather?lat=" + String(lat) + "&lon=" +
+       
+        let urlPath = "http://api.openweathermap.org/data/2.5/weather?lat=" + String(lat) + "&lon=" +
         String(long)+"&units=imperial&appid=3a762d1a0b2e642dcf94080d1d6f0fbb"
+        
+        
         
         let url = NSURL(string: urlPath)
         let session = NSURLSession.sharedSession()
@@ -69,13 +73,15 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                         // If there is an error parsing JSON, print it to the console
                         print("JSON Error \(err!.localizedDescription)")
                     }
-                    if let results = jsonResult["weather"] as? [[String: AnyObject]]
+                    if let results = jsonResult["main"] as? [[String: AnyObject]]
                     {
                         dispatch_async(dispatch_get_main_queue(), {
                         })
                         
                         for info in results {
+                            print(info)
                             if let temp = info["temp"] as? String {
+                                
                                 self.weatherDesc.text! += temp
                             }
                         }
@@ -91,6 +97,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         // The task is just an object with all these properties set
         // In order to actually make the web request, we need to "resume"
         task.resume()
+
     }
     
     
