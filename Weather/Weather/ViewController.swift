@@ -17,6 +17,11 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     let locationManager = CLLocationManager() //used for getting current coords
     
+    var temp = ""
+    var pressure = String()
+    var min_temp = String()
+    var max_temp = String()
+    var humidity = String()
     
     var lat = 0
     var long = 0
@@ -44,8 +49,11 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         
         let locValue:CLLocationCoordinate2D = manager.location!.coordinate
         
-        lat =  Int(locValue.latitude) //Trim for API use
-        long = Int(locValue.longitude)
+        self.lat =  Int(locValue.latitude) //Trim for API use
+        self.long = Int(locValue.longitude)
+        
+        print(self.lat)
+        print(self.long)
         
     
     }
@@ -73,18 +81,19 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                         // If there is an error parsing JSON, print it to the console
                         print("JSON Error \(err!.localizedDescription)")
                     }
-                    if let results = jsonResult["main"] as? [[String: AnyObject]]
+                    if let results = jsonResult["main"] as? [String: AnyObject]
                     {
                         dispatch_async(dispatch_get_main_queue(), {
                         })
                         
-                        for info in results {
-                            print(info)
-                            if let temp = info["temp"] as? String {
-                                
-                                self.weatherDesc.text! += temp
-                            }
-                        }
+                        self.temp += String(results["temp"]!)
+                        //print(self.temp)
+                        self.pressure = String(results["pressure"]!)
+                        self.humidity = String(results["humidity"]!)
+                        self.min_temp = String(results["temp_min"]!)
+                        self.max_temp = String(results["temp_max"]!)
+                        
+                        
                         
                     }
                 }
@@ -103,6 +112,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     func buttonPress(sender: UIButton) {
         getWeather()
+        
+        self.weatherDesc.text = "Temperature: " + self.temp
     }
     
     
