@@ -17,14 +17,8 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     let locationManager = CLLocationManager() //used for getting current coords
     
-    var temp = ""
-    var pressure = String()
-    var min_temp = String()
-    var max_temp = String()
-    var humidity = String()
-    
-    var lat = 0
-    var long = 0
+    var lat = Int?()
+    var long = Int?()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +36,6 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         getWeatherButton.addTarget(self, action: "buttonPress:", forControlEvents: UIControlEvents.TouchDown)
         
         
-        
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -51,19 +44,15 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         
         self.lat =  Int(locValue.latitude) //Trim for API use
         self.long = Int(locValue.longitude)
-        
-        print(self.lat)
-        print(self.long)
-        
     
     }
     
     func getWeather() {
        
-        let urlPath = "http://api.openweathermap.org/data/2.5/weather?lat=" + String(lat) + "&lon=" +
-        String(long)+"&units=imperial&appid=3a762d1a0b2e642dcf94080d1d6f0fbb"
+        let urlPath = "http://api.openweathermap.org/data/2.5/weather?lat=" + String(self.lat) + "&lon=" +
+        String(self.long)+"&units=imperial&appid=3a762d1a0b2e642dcf94080d1d6f0fbb"
         
-        
+        print(self.lat, self.long)
         
         let url = NSURL(string: urlPath)
         let session = NSURLSession.sharedSession()
@@ -86,12 +75,14 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                         dispatch_async(dispatch_get_main_queue(), {
                         })
                         
-                        self.temp += String(results["temp"]!)
-                        //print(self.temp)
-                        self.pressure = String(results["pressure"]!)
+                        var temp = String(results["temp"]!)
+                        
+                        /*self.pressure = String(results["pressure"]!)
                         self.humidity = String(results["humidity"]!)
                         self.min_temp = String(results["temp_min"]!)
-                        self.max_temp = String(results["temp_max"]!)
+                        self.max_temp = String(results["temp_max"]!)*/
+                        
+                        self.weatherDesc.text = temp
                         
                         
                         
@@ -112,8 +103,6 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     func buttonPress(sender: UIButton) {
         getWeather()
-        
-        self.weatherDesc.text = "Temperature: " + self.temp
     }
     
     
