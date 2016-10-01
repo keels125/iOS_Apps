@@ -21,18 +21,18 @@
                                 <rect key="frame" x="105" y="65" width="111" height="30"/>
                                 <state key="normal" title="Get My Weather"/>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="                       Weather" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="frg-vR-ddn">
-                                <rect key="frame" x="22" y="119" width="277" height="236"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="nkI-cQ-aJd">
+                                <rect key="frame" x="49" y="158" width="240" height="128"/>
+                                <color key="backgroundColor" red="0.68261976711062289" green="0.85194386575510128" blue="0.88344381313131315" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="getWeatherButton" destination="PXe-OP-yrV" id="Dl1-0E-XKI"/>
-                        <outlet property="weatherDesc" destination="frg-vR-ddn" id="x75-sU-zHP"/>
+                        <outlet property="weatherDesc" destination="nkI-cQ-aJd" id="Zkn-r7-ZdD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

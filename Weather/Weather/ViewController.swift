@@ -13,24 +13,27 @@ import CoreLocation
 class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
 
     @IBOutlet weak var getWeatherButton: UIButton!
-    @IBOutlet weak var weatherDesc: UILabel!
+    
+    
+    @IBOutlet weak var weatherDesc: UITextView!
     
     let locationManager = CLLocationManager() //used for getting current coords
     
-    var lat = Int?()
-    var long = Int?()
+    var lat = 0
+    var long = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.locationManager.requestAlwaysAuthorization() //request auth from user
         self.locationManager.requestWhenInUseAuthorization() //app in foreground
+        self.weatherDesc.text = "wtf"
         
         if CLLocationManager.locationServicesEnabled() {
         
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
+            self.locationManager.delegate = self
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            self.locationManager.startUpdatingLocation()
         }
         
         getWeatherButton.addTarget(self, action: "buttonPress:", forControlEvents: UIControlEvents.TouchDown)
@@ -40,10 +43,14 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        let locValue:CLLocationCoordinate2D = manager.location!.coordinate
+        locationManager.stopUpdatingLocation()
         
-        self.lat =  Int(locValue.latitude) //Trim for API use
-        self.long = Int(locValue.longitude)
+        //let locValue:CLLocationCoordinate2D = manager.location!.coordinate
+        
+        let locValue: CLLocation = locations[locations.count - 1]
+        
+        self.lat =  Int(locValue.coordinate.latitude) //Trim for API use
+        self.long = Int(locValue.coordinate.longitude)
     
     }
     
@@ -75,19 +82,22 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                         dispatch_async(dispatch_get_main_queue(), {
                         })
                         
-                        var temp = String(results["temp"]!)
-                        
-                        /*self.pressure = String(results["pressure"]!)
-                        self.humidity = String(results["humidity"]!)
-                        self.min_temp = String(results["temp_min"]!)
-                        self.max_temp = String(results["temp_max"]!)*/
-                        
+                            let temp = String(results["temp"]!)
+//
+//                        let pressure = String(results["pressure"]!)
+//                        let humidity = String(results["humidity"]!)
+//                        let min_temp = String(results["temp_min"]!)
+//                        let max_temp = String(results["temp_max"]!)
                         self.weatherDesc.text = temp
-                        
+                        //self.weatherDesc.text
+//                        self.weatherDesc.text  = "Current temperature: "+temp+"\n"+"Pressure: "+pressure+"\n"+"Humidity: "+humidity+"\n"+"Min temp: "+min_temp+"\n"+"Max temp: "+max_temp
+//                        
                         
                         
                     }
+                    //self.weatherDesc.text = results["pressure"]
                 }
+            
             } catch let error as NSError {
                     print("json error \(error.localizedDescription)")
             }
@@ -102,6 +112,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     
     
     func buttonPress(sender: UIButton) {
+        self.locationManager.startUpdatingLocation()
         getWeather()
     }
     
