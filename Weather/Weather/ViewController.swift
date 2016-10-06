@@ -22,13 +22,18 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
     var lat = 0
     var long = 0
     
+    var temp = ""
+    var pressure = ""
+    var humidity = ""
+    var min_temp = ""
+    var max_temp = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.locationManager.requestAlwaysAuthorization() //request auth from user
         self.locationManager.requestWhenInUseAuthorization() //app in foreground
-        self.weatherDesc.text = "wtf"
-        
+            
         if CLLocationManager.locationServicesEnabled() {
         
             self.locationManager.delegate = self
@@ -37,6 +42,7 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         }
         
         getWeatherButton.addTarget(self, action: "buttonPress:", forControlEvents: UIControlEvents.TouchDown)
+        
         
         
     }
@@ -82,16 +88,14 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
                         dispatch_async(dispatch_get_main_queue(), {
                         })
                         
-                            let temp = String(results["temp"]!)
-//
-//                        let pressure = String(results["pressure"]!)
-//                        let humidity = String(results["humidity"]!)
-//                        let min_temp = String(results["temp_min"]!)
-//                        let max_temp = String(results["temp_max"]!)
-                        self.weatherDesc.text = temp
-                        //self.weatherDesc.text
-//                        self.weatherDesc.text  = "Current temperature: "+temp+"\n"+"Pressure: "+pressure+"\n"+"Humidity: "+humidity+"\n"+"Min temp: "+min_temp+"\n"+"Max temp: "+max_temp
-//                        
+                        
+                        self.temp = String(results["temp"]!)
+
+                        self.pressure = String(results["pressure"]!)
+                        self.humidity = String(results["humidity"]!)
+                        self.min_temp = String(results["temp_min"]!)
+                        self.max_temp = String(results["temp_max"]!)
+                        
                         
                         
                     }
@@ -107,13 +111,14 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         // The task is just an object with all these properties set
         // In order to actually make the web request, we need to "resume"
         task.resume()
-
+        self.weatherDesc.text  = "Current temperature: "+self.temp+"\n"+"Pressure: "+self.pressure+"\n"+"Humidity: "+self.humidity+"\n"+"Min temp: "+self.min_temp+"\n"+"Max temp: "+self.max_temp
     }
     
     
     func buttonPress(sender: UIButton) {
         self.locationManager.startUpdatingLocation()
         getWeather()
+        
     }
     
     
