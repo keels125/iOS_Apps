@@ -111,13 +111,18 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         // The task is just an object with all these properties set
         // In order to actually make the web request, we need to "resume"
         task.resume()
-        self.weatherDesc.text  = "Current temperature: "+self.temp+"\n"+"Pressure: "+self.pressure+"\n"+"Humidity: "+self.humidity+"\n"+"Min temp: "+self.min_temp+"\n"+"Max temp: "+self.max_temp
+        
     }
     
     
     func buttonPress(sender: UIButton) {
         self.locationManager.startUpdatingLocation()
         getWeather()
+        while (self.max_temp=="") {
+            //wait
+        }
+        
+        self.weatherDesc.text  = "Current temperature: "+self.temp+"\n"+"Pressure: "+self.pressure+"\n"+"Humidity: "+self.humidity+"%\n"+"Min temp: "+self.min_temp+"\n"+"Max temp: "+self.max_temp
         
     }
     
