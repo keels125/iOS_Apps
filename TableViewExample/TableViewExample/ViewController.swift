@@ -7,6 +7,7 @@
 //  Tutorial taken from StackOverlow and We ❤ Swift
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -14,14 +15,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var addItem: UIButton!
     @IBOutlet weak var tableView: UITableView!
     
-    var animals: [String] = ["Horse", "Cow", "Camel", "Sheep", "Goat"]
+    var animal = [NSManagedObject]()
+    
     let cellReuseIdentifier = "cell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         //Register table view cell class
-        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
+        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -30,13 +32,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.animals.count
+        return animal.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier(cellReuseIdentifier) as UITableViewCell!
-        cell.textLabel?.text = self.animals[indexPath.row]
-        return cell
+        let cell = tableView.dequeueReusableCellWithIdentifier("Cell")
+        let a = animal[indexPath.row]
+        
+        cell!.textLabel!.text = a.valueForKey("name") as? String
+        
+        return cell!
     }
     
     func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
@@ -46,7 +51,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
         if editingStyle == .Delete {
-            animals.removeAtIndex(indexPath.row)
+            animal.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade
             )
         } else if editingStyle == .Insert {
@@ -57,12 +62,35 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func buttonPress(sender: UIButton) {
-        animals.append(itemDesc.text!)
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let managedContext = appDelegate.managedObjectContext
+        
+        let entity =  NSEntityDescription.entityForName("A",
+            inManagedObjectContext:managedContext)
+        
+        let a = NSManagedObject(entity: entity!,
+            insertIntoManagedObjectContext: managedContext)
+        
+        a.setValue(itemDesc.text!, forKey: "name")
+        
+        do {
+            try managedContext.save()
+        } catch let error as NSError {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+        
+        
+        
+        
+        
+        /*animals.append(itemDesc.text!)
         tableView.beginUpdates()
         tableView.insertRowsAtIndexPaths([
             NSIndexPath(forRow: animals.count-1, inSection: 0)
             ], withRowAnimation: .Automatic)
         tableView.endUpdates()
+        */
         
     }
    
