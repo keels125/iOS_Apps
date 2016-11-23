@@ -17,7 +17,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var animal = [NSManagedObject]()
     
-    let cellReuseIdentifier = "cell"
+    let cellReuseIdentifier = "Cell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +36,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell")
+        let cell = tableView.dequeueReusableCellWithIdentifier(cellReuseIdentifier)
+        
         let a = animal[indexPath.row]
         
         cell!.textLabel!.text = a.valueForKey("name") as? String
@@ -44,9 +45,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell!
     }
     
-    func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-        print("You tapped cell number \(indexPath.row).")
-    }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
@@ -66,34 +64,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
         
-        let entity =  NSEntityDescription.entityForName("A",
+        
+        
+        let entity =  NSEntityDescription.entityForName("Animal",
             inManagedObjectContext:managedContext)
         
-        let a = NSManagedObject(entity: entity!,
-            insertIntoManagedObjectContext: managedContext)
+        //let a = NSManagedObject(entity: entity!,
+          //  insertIntoManagedObjectContext: managedContext)
+        
+        var a = NSEntityDescription.insertNewObjectForEntityForName("Animal",
+            inManagedObjectContext: self.managedObjectContext!) as Animal
         
         a.setValue(itemDesc.text!, forKey: "name")
         
         do {
             try managedContext.save()
+            animal.append(a)
         } catch let error as NSError {
             print("Could not save \(error), \(error.userInfo)")
         }
         
+        self.tableView.reloadData()
         
-        
-        
-        
-        /*animals.append(itemDesc.text!)
-        tableView.beginUpdates()
-        tableView.insertRowsAtIndexPaths([
-            NSIndexPath(forRow: animals.count-1, inSection: 0)
-            ], withRowAnimation: .Automatic)
-        tableView.endUpdates()
-        */
         
     }
-   
+    
 
 
 }
