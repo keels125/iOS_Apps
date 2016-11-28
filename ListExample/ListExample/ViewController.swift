@@ -7,11 +7,12 @@
 //  Tutorial taken from Ray Wenderlich: https://www.raywenderlich.com/115695/getting-started-with-core-data-tutorial
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
-    var names = [String]()
+    var people = [NSManagedObject]()
     
     @IBAction func addName(sender: AnyObject) {
         
@@ -22,7 +23,7 @@ class ViewController: UIViewController, UITableViewDataSource {
             handler: { (action:UIAlertAction) -> Void in
                 
                 let textField = alert.textFields!.first
-                self.names.append(textField!.text!)
+                self.saveName(textField!.text!)
                 self.tableView.reloadData()
         })
         
@@ -59,21 +60,81 @@ class ViewController: UIViewController, UITableViewDataSource {
     }*/
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return names.count
+        return people.count
     }
     
     func tableView(tableView: UITableView,
         cellForRowAtIndexPath
         indexPath: NSIndexPath) -> UITableViewCell {
             
-            //dequeues cells from the table view and adds them to names array
-            
             let cell =
             tableView.dequeueReusableCellWithIdentifier("Cell")
             
-            cell!.textLabel!.text = names[indexPath.row]
+            let person = people[indexPath.row]
+            
+            cell!.textLabel!.text =
+                person.valueForKey("name") as? String
             
             return cell!
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if editingStyle == .Delete {
+            people.removeAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade
+            )
+        }
+        
+    }
+    
+    func saveName(name: String) {
+        //1
+        let appDelegate =
+        UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        //2
+        let entity =  NSEntityDescription.entityForName("Person",
+            inManagedObjectContext:managedContext)
+        
+        let person = NSManagedObject(entity: entity!,
+            insertIntoManagedObjectContext: managedContext)
+        
+        //3
+        person.setValue(name, forKey: "name")
+        
+        //4
+        do {
+            try managedContext.save()
+            //5
+            people.append(person)
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        //1
+        let appDelegate =
+        UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        //2
+        let fetchRequest = NSFetchRequest(entityName: "Person")
+        
+        //3
+        do {
+            let results =
+            try managedContext.executeFetchRequest(fetchRequest)
+            people = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
     }
     
 
